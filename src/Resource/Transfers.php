@@ -25,6 +25,11 @@ class Transfers extends MoipResource
     /**
      * @const string
      */
+    const METHOD_MOIP = 'MOIP_ACCOUNT';
+
+    /**
+     * @const string
+     */
     const TYPE = 'CHECKING';
 
     /**
@@ -40,6 +45,7 @@ class Transfers extends MoipResource
         $this->data = new stdClass();
         $this->data->transferInstrument = new stdClass();
         $this->data->transferInstrument->bankAccount = new stdClass();
+        $this->data->trahsferInstrument->moipAccount = new stdClass();
         $this->data->transferInstrument->bankAccount->holder = new stdClass();
         $this->data->transferInstrument->bankAccount->holder->taxDocument = new stdClass();
     }
@@ -62,6 +68,12 @@ class Transfers extends MoipResource
         $transfers->data->transferInstrument->method = $this->getIfSet('method', $transfer_instrument);
 
         $bank_account = $this->getIfSet('bankAccount', $transfer_instrument);
+
+        $moip_account = $this->getIfSet('moipAccount', $transfer_instrument);
+
+        $transfers->data->transferInstrument->moipAccount = new stdClass();
+        $transfers->data->transferInstrument->moipAccount->id = $this->getIfSet('id', $moip_account);
+
         $transfers->data->transferInstrument->bankAccount = new stdClass();
         $transfers->data->transferInstrument->bankAccount->id = $this->getIfSet('id', $bank_account);
         $transfers->data->transferInstrument->bankAccount->type = $this->getIfSet('type', $bank_account);
@@ -128,6 +140,24 @@ class Transfers extends MoipResource
         $this->data->amount = $amount;
         $this->data->transferInstrument->method = self::METHOD;
         $this->data->transferInstrument->bankAccount->id = $bankAccountId;
+
+        return $this;
+    }
+
+
+     /**
+     * Set info of transfers to a saved bank account.
+     *
+     * @param int    $amount        Amount
+     * @param string $moipAccountId Saved moip account id.
+     *
+     * @return $this
+     */
+    public function setTransfersToMoipAccountId($amount, $moipAccountId)
+    {
+        $this->data->amount = $amount;
+        $this->data->transferInstrument->method = self::METHOD_MOIP;
+        $this->data->transferInstrument->moipAccount->id = $moipAccountId;
 
         return $this;
     }
